@@ -5,7 +5,8 @@ export const localization = {
     buttons: {
       addWord: 'Add Word',
       repeatWords: 'Repeat Words',
-      repeatTranslations: 'Repeat Translations'
+      repeatTranslations: 'Repeat Translations',
+      close: 'Close',
     },
     addWord: 'Word adding',
     repeatWords: 'Repeat words',
@@ -28,7 +29,8 @@ export const localization = {
     buttons: {
       addWord: 'Добавить слово',
       repeatWords: 'Повторить слова',
-      repeatTranslations: 'Повторить переводы'
+      repeatTranslations: 'Повторить переводы',
+      close: 'Закрыть'
     },
     addWord: 'Добавление слова',
     repeatWords: 'Повторение слов',

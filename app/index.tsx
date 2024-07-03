@@ -5,18 +5,33 @@ import {SafeAreaView} from "react-native-safe-area-context";
 import {Colors} from "@/constants/Colors";
 import {useColorScheme} from "@/hooks/useColorScheme";
 import {useRouter} from "expo-router";
+import {RepeatType} from "@/app/game/repeatWords";
+import {useSQLiteContext} from "expo-sqlite";
 
 export default function IndexScreen() {
   const { i18n } = useLocale();
   const colorScheme = useColorScheme();
   const router = useRouter();
+  const db = useSQLiteContext();
 
   const goToAddWord = (): void => {
       router.push('/game/addWord');
   }
 
   const goToRepeatWords = (): void => {
-    router.push('/game/repeatWords');
+    router.push({ pathname: '/game/repeatWords', params: { type: RepeatType.TYPE_WORDS } });
+  }
+
+  const goToRepeatTranslations = (): void => {
+    router.push({ pathname: '/game/repeatWords', params: { type: RepeatType.TYPE_TRANSLATIONS } });
+  }
+
+  const dropDatabase = (): void => {
+    db.execAsync('DELETE FROM words; DELETE FROM SQLITE_SEQUENCE WHERE name=\'words\';').then(() => {
+      alert('Ready!');
+    }).catch((err) => {
+      alert(err);
+    })
   }
 
   const styles = StyleSheet.create({
@@ -52,11 +67,11 @@ export default function IndexScreen() {
       <View style={styles.buttonsContainer}>
         <ThemedButton variant={ButtonVariants.Yellow} text={i18n.t('buttons.addWord')} onPress={goToAddWord}></ThemedButton>
         <ThemedButton text={i18n.t('buttons.repeatWords')} onPress={goToRepeatWords}></ThemedButton>
-        <ThemedButton text={i18n.t('buttons.repeatTranslations')}></ThemedButton>
+        <ThemedButton text={i18n.t('buttons.repeatTranslations')} onPress={goToRepeatTranslations}></ThemedButton>
       </View>
       <View style={{ marginTop: 'auto', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end'}}>
       <Text>@ddgame</Text>
-      <Text style={{ fontSize: 9}}>Remember icons created by Freepik - Flaticon</Text>
+      <Text style={{ fontSize: 8}}>Remember icons created by Freepik - Flaticon</Text>
       </View>
     </SafeAreaView>
   );

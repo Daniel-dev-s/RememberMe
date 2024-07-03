@@ -7,6 +7,12 @@ import {useColorScheme} from "@/hooks/useColorScheme";
 import {useSQLiteContext} from "expo-sqlite";
 import {useEffect, useRef, useState} from "react";
 import {SavedWord} from "@/types/entities.types";
+import {useLocalSearchParams} from "expo-router";
+
+export enum RepeatType {
+  TYPE_WORDS = 'TYPE_WORDS',
+  TYPE_TRANSLATIONS = 'TYPE_TRANSLATIONS',
+}
 
 type GameTranslation = {
   text: string;
@@ -22,6 +28,9 @@ export default function RepeatWordsScreen() {
   const [translations, setTranslations] = useState<GameTranslation[]>([]);
   const [truth, showTruth] = useState(false);
   const [guessed, setGuessed] = useState<number>(0);
+  const { type }  = useLocalSearchParams();
+  const keyParam = (type as unknown as RepeatType) === RepeatType.TYPE_WORDS ? 'word' : 'translation';
+  const visibleParam = keyParam === 'word' ? 'translation' : 'word';
 
   useEffect(() => {
     (async function () {
@@ -40,8 +49,8 @@ export default function RepeatWordsScreen() {
       const randomWord = restWords[Math.floor(Math.random() * (restWords.length))];
 
       setCurrentWord(randomWord);
-      const allTranslations = restWords.map((word) => word.translation);
-      let randomTranslations: GameTranslation[] = [{text: randomWord.translation, correct: true}];
+      const allTranslations = restWords.map((word) => word[visibleParam]);
+      let randomTranslations: GameTranslation[] = [{text: randomWord[visibleParam], correct: true}];
 
       while (randomTranslations.length < Math.min(4, restWords.length) ) {
         const transToAdd = {
@@ -70,7 +79,7 @@ export default function RepeatWordsScreen() {
     }
   }
   const translationChosen = (text: string) => (): void => {
-    if (text === currentWord?.translation) {
+    if (text === currentWord?.[visibleParam]) {
       setGuessed(guessed => ++guessed);
     }
 
@@ -110,7 +119,7 @@ export default function RepeatWordsScreen() {
   })
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: 100, backgroundColor: Colors[colorScheme ?? 'light'].background, }}>
-      <Text style={styles.title}>{currentWord?.word}</Text>
+      <Text style={styles.title}>{currentWord?.[keyParam]}</Text>
       <View style={styles.innerContainer}>
         {translations.map((translation, i) => {
           let variant = ButtonVariants.Primary;
@@ -126,7 +135,7 @@ export default function RepeatWordsScreen() {
       </View>
       <View style={{ marginTop: 'auto', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end'}}>
         <Text>@ddgame</Text>
-        <Text style={{ fontSize: 9}}>Remember icons created by Freepik - Flaticon</Text>
+        <Text style={{ fontSize: 8}}>Remember icons created by Freepik - Flaticon</Text>
       </View>
     </SafeAreaView>
   );

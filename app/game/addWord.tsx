@@ -5,9 +5,9 @@ import {SafeAreaView} from "react-native-safe-area-context";
 import {Colors} from "@/constants/Colors";
 import {useColorScheme} from "@/hooks/useColorScheme";
 import {ThemedInput} from "@/components/ThemedInput";
-import {useState} from "react";
+import {useRef, useState} from "react";
 import {useSQLiteContext} from "expo-sqlite";
-import {useRouter} from "expo-router";
+import Snackbar, {SnackbarHandle} from "@/components/Snackbar";
 
 export default function AddWordScreen() {
   const { i18n } = useLocale();
@@ -15,14 +15,14 @@ export default function AddWordScreen() {
   const [word, setWord] = useState<string>('');
   const [translation, setTranslation] = useState<string>('');
   const db = useSQLiteContext();
-  const router = useRouter();
+  const snackBarRef = useRef<SnackbarHandle>(null);
 
   const addWordClick = () => {
     if (word.length && translation.length) {
       addWordToDb().then(() => {
-        router.back();
-
-        alert(i18n.t('snackbars.wordAdded'));
+        snackBarRef.current?.show(i18n.t('snackbars.wordAdded'));
+        setWord('');
+        setTranslation('');
       }).catch(() => {
         alert(i18n.t('errors.cannotAddWordToDB'))
       })
@@ -36,7 +36,7 @@ export default function AddWordScreen() {
       db.prepareAsync('INSERT INTO `words` (word, translation) VALUES ($word, $translation)')
         .then((statement) => {
           try {
-            statement.executeAsync({$word: word, $translation: translation})
+            statement.executeAsync({$word: word.trim().toLowerCase(), $translation: translation.trim().toLowerCase()})
               .then(() => {
                 resolve();
               })
@@ -70,12 +70,13 @@ export default function AddWordScreen() {
   return (
     <SafeAreaView style={{ flex: 1, paddingTop: 100, backgroundColor: Colors[colorScheme ?? 'light'].background, }}>
       <View style={styles.innerContainer}>
-        <ThemedInput onChangeText={(text) => setWord(text)} label={i18n.t('theWord')}></ThemedInput>
-        <ThemedInput onChangeText={(text) => setTranslation(text)} label={i18n.t('theTranslation')}></ThemedInput>
+        <ThemedInput onChangeText={(text) => setWord(text)} value={word} label={i18n.t('theWord')}></ThemedInput>
+        <ThemedInput onChangeText={(text) => setTranslation(text)} value={translation} label={i18n.t('theTranslation')}></ThemedInput>
         <View style={{ marginTop: 25 }}>
           <ThemedButton onPress={addWordClick} variant={ButtonVariants.Yellow} text={i18n.t('iLearned')}></ThemedButton>
         </View>
       </View>
+      <Snackbar ref={snackBarRef}></Snackbar>
       <View style={{ marginTop: 'auto', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end'}}>
         <Text>@ddgame</Text>
         <Text style={{ fontSize: 9}}>Remember icons created by Freepik - Flaticon</Text>
