@@ -18,7 +18,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.ddgame.rememberMe"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -26,6 +27,14 @@
     "plugins": [
       "expo-router",
       "expo-localization"
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "b160bc58-5c28-4ae6-9fb7-98149d186518"
+      }
+    }
   }
 }
