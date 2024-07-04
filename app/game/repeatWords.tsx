@@ -1,4 +1,4 @@
-import {GestureResponderEvent, StyleSheet, Text, View} from "react-native";
+import {StyleSheet, Text, View} from "react-native";
 import {useLocale} from "@/providers/LocaleProvider/LocaleProvider";
 import {ButtonVariants, ThemedButton} from "@/components/ThemedButton";
 import {SafeAreaView} from "react-native-safe-area-context";
@@ -28,13 +28,15 @@ export default function RepeatWordsScreen() {
   const [translations, setTranslations] = useState<GameTranslation[]>([]);
   const [truth, showTruth] = useState(false);
   const [guessed, setGuessed] = useState<number>(0);
-  const { type }  = useLocalSearchParams();
+  const { type, dictionaries }  = useLocalSearchParams();
   const keyParam = (type as unknown as RepeatType) === RepeatType.TYPE_WORDS ? 'word' : 'translation';
   const visibleParam = keyParam === 'word' ? 'translation' : 'word';
 
   useEffect(() => {
     (async function () {
-      const result = await db.getAllAsync<SavedWord>('SELECT * FROM words');
+      const dictionariesRow = JSON.parse(dictionaries as string).join(',');
+
+      const result = await db.getAllAsync<SavedWord>('SELECT * FROM words WHERE dictionary_id IN ('+dictionariesRow+')');
       setAllWords(result);
     })();
 
@@ -132,10 +134,6 @@ export default function RepeatWordsScreen() {
           return <ThemedButton key={i} variant={variant} text={translation.text} onPress={translationChosen(translation.text)}></ThemedButton>
         })}
         <Text style={styles.guessedText}>{i18n.t('guessed', {count: guessed})}</Text>
-      </View>
-      <View style={{ marginTop: 'auto', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end'}}>
-        <Text>@ddgame</Text>
-        <Text style={{ fontSize: 8}}>Remember icons created by Freepik - Flaticon</Text>
       </View>
     </SafeAreaView>
   );

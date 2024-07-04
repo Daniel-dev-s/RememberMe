@@ -10,6 +10,7 @@ import LocaleProvider from "@/providers/LocaleProvider/LocaleProvider";
 import {SafeAreaProvider} from "react-native-safe-area-context";
 import {SQLiteDatabase, SQLiteProvider} from "expo-sqlite";
 import * as SQLite from 'expo-sqlite';
+import {Text, View} from "react-native";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -31,12 +32,20 @@ export default function RootLayout() {
   }
 
   async function migrateDbIfNeeded(db: SQLiteDatabase) {
-    await db.execAsync('CREATE TABLE IF NOT EXISTS words (' +
+    await db.execAsync(
+      'CREATE TABLE IF NOT EXISTS dictionaries (' +
+      'id INTEGER PRIMARY KEY AUTOINCREMENT,' +
+      'name TEXT NOT NULL,' +
+      'created TIMESTAMP DEFAULT CURRENT_TIMESTAMP' +
+      ');' +
+      'CREATE TABLE IF NOT EXISTS words (' +
       'id INTEGER PRIMARY KEY AUTOINCREMENT,' +
       'word TEXT NOT NULL,' +
       'translation TEXT NOT NULL,' +
+      'dictionary_id INTEGER NOT NULL,' +
       'created TIMESTAMP DEFAULT CURRENT_TIMESTAMP' +
-      ')');
+      ');'
+    );
   };
 
   return (
@@ -48,6 +57,10 @@ export default function RootLayout() {
               <Stack.Screen name="index" options={{ headerShown: false }} />
               <Stack.Screen name="game" options={{ headerShown: false }} />
             </Stack>
+            <View style={{ marginTop: 'auto', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end'}}>
+              <Text>@ddgame</Text>
+              <Text style={{ fontSize: 9}}>Remember icons created by Freepik - Flaticon</Text>
+            </View>
           </LocaleProvider>
         </SafeAreaProvider>
       </ThemeProvider>

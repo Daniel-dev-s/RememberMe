@@ -19,11 +19,15 @@ export default function IndexScreen() {
   }
 
   const goToRepeatWords = (): void => {
-    router.push({ pathname: '/game/repeatWords', params: { type: RepeatType.TYPE_WORDS } });
+    router.push({ pathname: '/game/selectDictionaries', params: { type: RepeatType.TYPE_WORDS } });
+  }
+
+  const goToDictionaries = (): void => {
+    router.push({ pathname: '/game/dictionaries' });
   }
 
   const goToRepeatTranslations = (): void => {
-    router.push({ pathname: '/game/repeatWords', params: { type: RepeatType.TYPE_TRANSLATIONS } });
+    router.push({ pathname: '/game/selectDictionaries', params: { type: RepeatType.TYPE_TRANSLATIONS } });
   }
 
   const dropDatabase = (): void => {
@@ -66,12 +70,9 @@ export default function IndexScreen() {
       <Image style={styles.logo} source={require('../assets/images/icon.png')} />
       <View style={styles.buttonsContainer}>
         <ThemedButton variant={ButtonVariants.Yellow} text={i18n.t('buttons.addWord')} onPress={goToAddWord}></ThemedButton>
+        <ThemedButton variant={ButtonVariants.Yellow} text={i18n.t('dictionaries')} onPress={goToDictionaries}></ThemedButton>
         <ThemedButton text={i18n.t('buttons.repeatWords')} onPress={goToRepeatWords}></ThemedButton>
         <ThemedButton text={i18n.t('buttons.repeatTranslations')} onPress={goToRepeatTranslations}></ThemedButton>
-      </View>
-      <View style={{ marginTop: 'auto', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end'}}>
-      <Text>@ddgame</Text>
-      <Text style={{ fontSize: 8}}>Remember icons created by Freepik - Flaticon</Text>
       </View>
     </SafeAreaView>
   );

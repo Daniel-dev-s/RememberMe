@@ -1,5 +1,5 @@
 import {Stack} from 'expo-router';
-import {Text} from "react-native";
+import {Text, View} from "react-native";
 import {useLocale} from "@/providers/LocaleProvider/LocaleProvider";
 
 export default function GameLayout() {
@@ -13,6 +13,8 @@ export default function GameLayout() {
     <Stack>
       <Stack.Screen name="addWord" options={{ headerTitle: () => getHeader(i18n.t('addWord')) }} />
       <Stack.Screen name="repeatWords" options={{ headerTitle: () => getHeader(i18n.t('repeatWords')) }} />
+      <Stack.Screen name="dictionaries" options={{ headerTitle: () => getHeader(i18n.t('dictionaries')) }} />
+      <Stack.Screen name="selectDictionaries" options={{ headerTitle: () => getHeader(i18n.t('selectDictionaries')) }} />
     </Stack>
   );
 }
