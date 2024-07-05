@@ -1,4 +1,4 @@
-import {View, Text, StyleSheet, Image} from "react-native";
+import {View, Text, StyleSheet, Image, Animated} from "react-native";
 import {useLocale} from "@/providers/LocaleProvider/LocaleProvider";
 import {ButtonVariants, ThemedButton} from "@/components/ThemedButton";
 import {SafeAreaView} from "react-native-safe-area-context";
@@ -6,36 +6,39 @@ import {Colors} from "@/constants/Colors";
 import {useColorScheme} from "@/hooks/useColorScheme";
 import {useRouter} from "expo-router";
 import {RepeatType} from "@/app/game/repeatWords";
-import {useSQLiteContext} from "expo-sqlite";
+import {useRef, useState} from "react";
 
 export default function IndexScreen() {
   const { i18n } = useLocale();
   const colorScheme = useColorScheme();
   const router = useRouter();
-  const db = useSQLiteContext();
+  const [animatedDegree, setAnimatedDegree] = useState(new Animated.Value(0));
 
   const goToAddWord = (): void => {
-      router.push('/game/addWord');
+   animateLogo(() => router.push('/game/addWord'));
   }
 
   const goToRepeatWords = (): void => {
-    router.push({ pathname: '/game/selectDictionaries', params: { type: RepeatType.TYPE_WORDS } });
+    animateLogo(() => router.push({ pathname: '/game/selectDictionaries', params: { type: RepeatType.TYPE_WORDS } }));
   }
 
   const goToDictionaries = (): void => {
-    router.push({ pathname: '/game/dictionaries' });
+    animateLogo(() => router.push({ pathname: '/game/dictionaries' }));
   }
 
   const goToRepeatTranslations = (): void => {
-    router.push({ pathname: '/game/selectDictionaries', params: { type: RepeatType.TYPE_TRANSLATIONS } });
+    animateLogo(() => router.push({ pathname: '/game/selectDictionaries', params: { type: RepeatType.TYPE_TRANSLATIONS } }));
   }
 
-  const dropDatabase = (): void => {
-    db.execAsync('DELETE FROM words; DELETE FROM SQLITE_SEQUENCE WHERE name=\'words\';').then(() => {
-      alert('Ready!');
-    }).catch((err) => {
-      alert(err);
-    })
+  const animateLogo = (callback: () => void) => {
+    Animated.timing(animatedDegree, {
+      toValue: 360,
+      duration: 400,
+      useNativeDriver: true,
+    }).start(() => {
+      setAnimatedDegree(new Animated.Value(0));
+      callback();
+    });
   }
 
   const styles = StyleSheet.create({
@@ -56,23 +59,33 @@ export default function IndexScreen() {
       borderRadius: 12,
     },
     buttonsContainer: {
-      gap: 10,
+      gap: 20,
       marginTop: 100,
       alignItems: 'center'
     }
   })
   return (
-    <SafeAreaView style={{ flex: 1, paddingTop: 100, backgroundColor: Colors[colorScheme ?? 'light'].background, }}>
+    <SafeAreaView style={{ flex: 1, paddingTop: 100, padding: 25, backgroundColor: Colors[colorScheme ?? 'light'].background, }}>
       <Text style={styles.appName}>
         {i18n.t('remember')}
-        <Text style={styles.yellow}>{i18n.t('me')}</Text>
+        <Text style={styles.yellow}>&nbsp;{i18n.t('me')}</Text>
       </Text>
-      <Image style={styles.logo} source={require('../assets/images/icon.png')} />
+      <Animated.Image style={[styles.logo, { transform: [{
+        rotateZ: animatedDegree.interpolate({
+            inputRange: [0, 360],
+            outputRange: ['0deg', '360deg']
+          })
+      }] }]} source={require('../assets/images/icon.png')} />
+
       <View style={styles.buttonsContainer}>
-        <ThemedButton variant={ButtonVariants.Yellow} text={i18n.t('buttons.addWord')} onPress={goToAddWord}></ThemedButton>
-        <ThemedButton variant={ButtonVariants.Yellow} text={i18n.t('dictionaries')} onPress={goToDictionaries}></ThemedButton>
-        <ThemedButton text={i18n.t('buttons.repeatWords')} onPress={goToRepeatWords}></ThemedButton>
-        <ThemedButton text={i18n.t('buttons.repeatTranslations')} onPress={goToRepeatTranslations}></ThemedButton>
+        <View style={{ alignItems: 'flex-start', gap: 10, width: '100%', borderLeftWidth: 4, borderColor: Colors.yellow }}>
+          <ThemedButton variant={ButtonVariants.Yellow} text={i18n.t('buttons.addWord')} onPress={goToAddWord}></ThemedButton>
+          <ThemedButton variant={ButtonVariants.Yellow} text={i18n.t('dictionaries')} onPress={goToDictionaries}></ThemedButton>
+        </View>
+        <View style={{ alignItems: 'flex-end', gap: 10, width: '100%', borderRightColor: Colors.primary, borderRightWidth: 4 }}>
+          <ThemedButton text={i18n.t('buttons.repeatWords')} onPress={goToRepeatWords}></ThemedButton>
+          <ThemedButton text={i18n.t('buttons.repeatTranslations')} onPress={goToRepeatTranslations}></ThemedButton>
+        </View>
       </View>
     </SafeAreaView>
   );

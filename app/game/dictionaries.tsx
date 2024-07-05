@@ -9,6 +9,7 @@ import {useEffect, useRef, useState} from "react";
 import {useSQLiteContext} from "expo-sqlite";
 import Snackbar, {SnackbarHandle} from "@/components/Snackbar";
 import {Dictionary} from "@/types/entities.types";
+import { AntDesign } from '@expo/vector-icons';
 
 export default function DictionariesScreen() {
   const { i18n } = useLocale();
@@ -142,14 +143,14 @@ export default function DictionariesScreen() {
         <View style={{ width: '70%' }}>
           <ThemedInput onChangeText={(text) => setNewDictionary(text)} value={newDictionary} label={i18n.t('dictionaryName')}></ThemedInput>
         </View>
-        <ThemedButton onPress={addDictionaryClick} variant={ButtonVariants.Yellow} text={i18n.t('buttons.add')}></ThemedButton>
+        <ThemedButton onPress={addDictionaryClick} variant={ButtonVariants.Yellow} text={<AntDesign name="addfolder" size={24} color="black" />}></ThemedButton>
       </View>
       <ScrollView style={styles.dictionariesContainer}>
         {dictionaries.map((dictionary, index) =>
           <View key={index} style={styles.dictionaryBlock}>
             <Text style={styles.dictionaryText}>{dictionary.name}</Text>
             <ThemedButton
-              text={i18n.t('buttons.delete')}
+              text={<AntDesign name="delete" size={24} color="black" />}
               variant={ButtonVariants.Danger}
               onPress={deleteDictionaryClick(dictionary.id)}
             ></ThemedButton>

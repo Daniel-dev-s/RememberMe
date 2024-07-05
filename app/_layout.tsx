@@ -59,7 +59,6 @@ export default function RootLayout() {
             </Stack>
             <View style={{ marginTop: 'auto', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end'}}>
               <Text>@ddgame</Text>
-              <Text style={{ fontSize: 9}}>Remember icons created by Freepik - Flaticon</Text>
             </View>
           </LocaleProvider>
         </SafeAreaProvider>

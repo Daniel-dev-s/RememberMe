@@ -11,7 +11,7 @@ export enum ButtonVariants {
 }
 
 type TButtonProps = PressableProps & {
-  text: string;
+  text: string | ReactElement;
   variant?: ButtonVariants;
 }
 
@@ -99,7 +99,10 @@ export const ThemedButton = ({ text, variant = ButtonVariants.Primary, ...rest }
       <Animated.View
         style={styles[variant]}
       >
-        <Text style={textStyles[variant]}>{text}</Text>
+        {typeof text === 'string'
+          ? <Text style={textStyles[variant]}>{text}</Text>
+          : text
+        }
       </Animated.View>
     </Pressable>
   )

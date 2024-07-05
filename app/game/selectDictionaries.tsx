@@ -9,6 +9,7 @@ import {useLocale} from "@/providers/LocaleProvider/LocaleProvider";
 import {useLocalSearchParams, useRouter} from "expo-router";
 import {useColorScheme} from "@/hooks/useColorScheme";
 import {Checkbox} from "expo-checkbox";
+import { AntDesign } from '@expo/vector-icons';
 
 export default function SelectDictionariesScreen (): ReactElement {
   const [dictionaries, setDictionaries] = useState<Dictionary[]>([]);
@@ -86,8 +87,8 @@ export default function SelectDictionariesScreen (): ReactElement {
           />
           <Text style={styles.checkBoxText}>{i18n.t('checkAll')}</Text>
         </View>
-        {dictionaries.map((dict) =>
-          <View style={styles.dictionary}>
+        {dictionaries.map((dict, i) =>
+          <View style={styles.dictionary} key={i}>
             <Checkbox
               style={styles.checkbox}
               value={selectedDictionaries[dict.id.toString()]}
@@ -101,7 +102,11 @@ export default function SelectDictionariesScreen (): ReactElement {
         )}
       </ScrollView>
       <View style={{ marginTop: 'auto' }}>
-        <ThemedButton text={i18n.t('buttons.ok')} onPress={continueToRepeating}></ThemedButton>
+        <ThemedButton text={
+          <View style={{ marginHorizontal: 'auto' }}>
+            <AntDesign name="check" size={24} color={Colors.secondary} />
+          </View>
+        } onPress={continueToRepeating}></ThemedButton>
       </View>
     </SafeAreaView>
   );

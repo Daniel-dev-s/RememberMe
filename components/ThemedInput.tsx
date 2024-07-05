@@ -14,11 +14,12 @@ export const ThemedInput = ( {label, ...restProps}: { label: string } & TextInpu
       fontSize: 18,
     },
     input: {
-      paddingVertical: 15,
+      paddingVertical: 10,
       fontSize: 18,
-      paddingHorizontal: 25,
-      borderWidth: 1,
-      borderColor: Colors[colorScheme ?? 'light'].text,
+      paddingHorizontal: 20,
+      borderWidth: 2,
+      borderRadius: 6,
+      borderColor: Colors.yellow,
       width: '100%',
     }
   });
